@@ -1,20 +1,26 @@
 package com.ca.Service.impl;
 
+import com.ca.Respository.UserProfileRepository;
 import com.ca.Respository.UserRepository;
 import com.ca.Service.UserService;
 import com.ca.model.User;
+import com.ca.model.UserProfile;
 import com.ca.model.dto.LoginResponseDTO;
 import com.ca.model.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRespository;
+    private UserProfileRepository userProfileRepository;
 
-    public UserServiceImpl(UserRepository userRespository) {
+    public UserServiceImpl(UserRepository userRespository, UserProfileRepository userProfileRepository) {
         this.userRespository = userRespository;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @Override

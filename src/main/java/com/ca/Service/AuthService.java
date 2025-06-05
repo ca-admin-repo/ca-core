@@ -23,5 +23,6 @@ import org.springframework.stereotype.Service;
 
 public interface AuthService {
     User createUser(UserDTO userDTO);
+    User verifyGoogleTokenAndLogin(String idToken)throws Exception;
     LoginResponseDTO login(LoginDTO loginDTO);
 }

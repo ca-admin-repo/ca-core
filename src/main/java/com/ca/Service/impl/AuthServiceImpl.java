@@ -13,7 +13,10 @@
  */
 
 package com.ca.Service.impl;
-
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.ca.Respository.UserProfileRepository;
 import com.ca.Respository.UserRepository;
 import com.ca.Service.AuthService;
@@ -35,6 +38,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Collections;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -71,6 +75,32 @@ public class AuthServiceImpl implements AuthService {
         userProfile.setPasswordFld(encodedSalt.split("###")[1]);
         userProfileRepository.save(userProfile);
         return user;
+    }
+
+    @Override
+    public User verifyGoogleTokenAndLogin(String idTokenString) throws Exception {
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                GoogleNetHttpTransport.newTrustedTransport(),
+                JacksonFactory.getDefaultInstance())
+                .setAudience(Collections.singletonList("YOUR_GOOGLE_CLIENT_ID"))
+                .build();
+
+        GoogleIdToken idToken = verifier.verify(idTokenString);
+        if (idToken != null) {
+            GoogleIdToken.Payload payload = idToken.getPayload();
+
+            String email = payload.getEmail();
+            String name = (String) payload.get("name");
+
+            // Check or create user
+            User user = userRespository.findByEmail(email)
+                    .orElseGet(() -> userRespository.save(new User(name, email)));
+
+            // Optionally generate JWT
+            return user;
+        } else {
+            throw new RuntimeException("Invalid ID token.");
+        }
     }
 
     public LoginResponseDTO login(LoginDTO loginDTO) {
