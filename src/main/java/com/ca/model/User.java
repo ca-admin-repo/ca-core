@@ -19,5 +19,8 @@ public class User {
     @Column(name = "email", length = 50)
     private String email;
 
+    @Column(name = "Mobile_Fld", length = 25, unique = true)
+    private String mobileFld;
+
 
 }
