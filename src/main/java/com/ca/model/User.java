@@ -1,26 +1,28 @@
 package com.ca.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "user_tbl")
 public class User {
 
     @Id
-    @Column(name = "OID_PKFld")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "OID_PKFld")
     private Long oidPkFld;
 
-    @Column(name = "name", length = 15)
+    @Column(name = "name", length = 50, nullable = false)
     private String name;
 
-    @Column(name = "email", length = 50)
+    @Column(name = "email", length = 100, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "Mobile_Fld", length = 25, unique = true)
-    private String mobileFld;
-
-
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
 }
